@@ -2,8 +2,14 @@
 /__history\*
 /__recovery
 /__recovery\*
+/*/__history
+/*/__recovery
 /Win32
 /*.dproj.local
 /*.identcache
 /*.res
 /*.groupproj.local
+/Classes/__history
+/Controller/__history
+/Model/__history
+/Manager/__history
