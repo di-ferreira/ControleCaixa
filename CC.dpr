@@ -1,4 +1,4 @@
-program Project1;
+program CC;
 
 uses
   madExcept,
@@ -10,7 +10,6 @@ uses
   uMain in 'uMain.pas' {Form1},
   DTO.Caixa in 'Classes\DTO.Caixa.pas',
   Model.Entidade.Interfaces in 'Model\Model.Entidade.Interfaces.pas',
-  Model.Entidade.Caixa in 'Model\Model.Entidade.Caixa.pas',
   Manager.Interfaces in 'Manager\Manager.Interfaces.pas',
   Manager.Types in 'Manager\Manager.Types.pas',
   Manager.Caixa in 'Manager\Manager.Caixa.pas',

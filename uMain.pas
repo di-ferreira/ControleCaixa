@@ -12,15 +12,13 @@ uses
   Vcl.Controls,
   Vcl.Forms,
   Vcl.Dialogs,
-  Manager.Caixa, Vcl.StdCtrls, Controller, DTO.Caixa;
+  Manager.Caixa, Vcl.StdCtrls, Controller, DTO.Caixa, Manager.Interfaces;
 
 type
   TForm1 = class(TForm)
     btnCaixa: TButton;
     mmSql: TMemo;
-    procedure FormCreate(Sender: TObject);
     procedure btnCaixaClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
   private
     pController: TController;
   public
@@ -36,27 +34,14 @@ implementation
 
 procedure TForm1.btnCaixaClick(Sender: TObject);
 var
-  vCaixa: TManagerCaixa;
+  iCaixa: iManager<TCaixa>;
 begin
-  vCaixa := pController.Caixa;
-  vCaixa
-     .This
-     .Abertura(TDateTime(Now))
-     .Total(500);
+  iCaixa := TManagerCaixa.New;
+  iCaixa.This.Abertura(TDateTime(Now)).Total(500);
 
-  vCaixa.Save;
+  iCaixa.Save;
 
-  mmSql.Lines.Add(pController.Caixa.Display);
-end;
-
-procedure TForm1.FormCreate(Sender: TObject);
-begin
-  pController := TController.Create;
-end;
-
-procedure TForm1.FormDestroy(Sender: TObject);
-begin
-  pController.Free;
+  mmSql.Lines.Add(iCaixa.Display);
 end;
 
 end.

@@ -5,11 +5,12 @@ interface
 uses
   DTO.Caixa,
   Data.DB,
-  Model.Entidade.Interfaces;
+  Model.Entidade.Interfaces, Manager.Interfaces;
 
 type
   TModelEntityCaixa = class(TInterfacedObject, iModelEntidade<TCaixa>)
   private
+    FManager: iManager<TCaixa>;
     FCaixa: TCaixa;
     FDataSet: TDataSet;
   public
@@ -31,7 +32,7 @@ implementation
 
 constructor TModelEntityCaixa.Create;
 begin
-  FCaixa := TCaixa.Create;
+  FCaixa := TCaixa.Create(FManager);
 end;
 
 function TModelEntityCaixa.DataSet(DataSource: TDataSource)

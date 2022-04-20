@@ -9,7 +9,7 @@ type
     FTotal: Currency;
     FAbertura: TDateTime;
   public
-    function Abertura: TDateTime; overload;
+   function Abertura: TDateTime; overload;
     function Abertura(Date: TDateTime): TCaixa; overload;
     function Fechamento: TDateTime; overload;
     function Fechamento(Date: TDateTime): TCaixa; overload;
