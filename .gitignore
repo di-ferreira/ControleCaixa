@@ -9,7 +9,4 @@
 /*.identcache
 /*.res
 /*.groupproj.local
-/Classes/__history
-/Controller/__history
-/Model/__history
-/Manager/__history
+/*/__history
