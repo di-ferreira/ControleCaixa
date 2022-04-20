@@ -1,0 +1,61 @@
+unit Model.Entidade.Caixa;
+
+interface
+
+uses
+  DTO.Caixa,
+  Data.DB,
+  Model.Entidade.Interfaces;
+
+type
+  TModelEntityCaixa = class(TInterfacedObject, iModelEntidade<TCaixa>)
+    function Find: iModelEntidade<TCaixa>;
+    function FindOne(Id: Variant): iModelEntidade<TCaixa>;
+    function Remove(Id: Integer): iModelEntidade<TCaixa>; overload;
+    function Update: iModelEntidade<TCaixa>;
+    function Insert: iModelEntidade<TCaixa>;
+    function DataSet(DataSource: TDataSource): iModelEntidade<TCaixa>;
+    function This: TCaixa;
+  end;
+
+implementation
+
+{ TModelEntityCaixa }
+
+function TModelEntityCaixa.DataSet(
+  DataSource: TDataSource): iModelEntidade<TCaixa>;
+begin
+
+end;
+
+function TModelEntityCaixa.Find: iModelEntidade<TCaixa>;
+begin
+
+end;
+
+function TModelEntityCaixa.FindOne(Id: Variant): iModelEntidade<TCaixa>;
+begin
+
+end;
+
+function TModelEntityCaixa.Insert: iModelEntidade<TCaixa>;
+begin
+
+end;
+
+function TModelEntityCaixa.Remove(Id: Integer): iModelEntidade<TCaixa>;
+begin
+
+end;
+
+function TModelEntityCaixa.This: TCaixa;
+begin
+
+end;
+
+function TModelEntityCaixa.Update: iModelEntidade<TCaixa>;
+begin
+
+end;
+
+end.

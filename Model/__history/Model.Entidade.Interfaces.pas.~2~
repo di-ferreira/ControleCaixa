@@ -1,0 +1,22 @@
+unit Model.Entidade.Interfaces;
+
+interface
+
+uses
+  Data.DB;
+
+type
+  iModelEntidade<T: class> = interface
+    function Listar: iModelEntidade<T>;
+    function ListarPorId(Id: Variant): iModelEntidade<T>;
+    function Excluir(Id: Integer): iModelEntidade<T>; overload;
+    function Excluir: iModelEntidade<T>; overload;
+    function Atualizar: iModelEntidade<T>;
+    function Inserir: iModelEntidade<T>;
+    function DataSet(DataSource: TDataSource): iModelEntidade<T>;
+    function This: T;
+  end;
+
+implementation
+
+end.

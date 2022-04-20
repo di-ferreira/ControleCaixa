@@ -1,0 +1,63 @@
+unit Manager.Types;
+
+interface
+
+type
+  TExpression = class
+  private
+  public
+    function Eq(Column: String; aValue: Variant): String;
+    function GreaterThan(Column: String; aValue: Variant): String;
+    function GreaterOrEqual(Column: String; aValue: Variant): String;
+    function LessThan(Column: String; aValue: Variant): String;
+    function LessOrEqual(Column: String; aValue: Variant): String;
+    function Like(Column: String; aValue: Variant): String;
+    function Different(Column: String; aValue: Variant): String;
+    function Between(Column, aValue: Variant): String;
+  end;
+
+implementation
+
+{ TExpression }
+
+function TExpression.Between(Column, aValue: Variant): String;
+begin
+
+end;
+
+function TExpression.Different(Column: String; aValue: Variant): String;
+begin
+
+end;
+
+function TExpression.Eq(Column: String; aValue: Variant): String;
+begin
+  Result := ' WHERE ' + Column + '=' + aValue;
+end;
+
+function TExpression.GreaterOrEqual(Column: String; aValue: Variant): String;
+begin
+
+end;
+
+function TExpression.GreaterThan(Column: String; aValue: Variant): String;
+begin
+
+end;
+
+function TExpression.LessOrEqual(Column: String; aValue: Variant): String;
+begin
+
+end;
+
+function TExpression.LessThan(Column: String; aValue: Variant): String;
+begin
+
+end;
+
+function TExpression.Like(Column: String; aValue: Variant): String;
+begin
+
+end;
+
+end.

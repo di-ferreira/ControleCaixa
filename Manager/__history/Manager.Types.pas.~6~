@@ -1,0 +1,21 @@
+unit Manager.Types;
+
+interface
+
+type
+  TExpression = class
+  private
+  public
+    function Eq(Column, aValue: Variant): String;
+  end;
+
+implementation
+
+{ TExpression }
+
+function TExpression.Eq(Column, aValue: Variant): String;
+begin
+  Result := ' WHERE ' + Column + '=' + aValue;
+end;
+
+end.

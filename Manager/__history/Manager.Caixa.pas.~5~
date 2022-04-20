@@ -1,0 +1,90 @@
+unit Manager.Caixa;
+
+interface
+
+uses
+  DTO.Caixa,
+  Manager.Interfaces,
+  Manager.Types,
+  System.Generics.Collections;
+
+type
+  TManagerCaixa<TCaixa, constructor> = class(TInterfacedObject,
+    iManager<TCaixa>)
+  private
+    FSQL: String;
+  public
+    procedure Save;
+    procedure Update;
+    procedure Remove;
+    function List: TObjectList<TCaixa>;
+    function Find: TObjectList<TCaixa>; overload;
+    function Find(ID: Variant): TCaixa; overload;
+    function Where(Expression: TExpression): iManager<TCaixa>;
+    function _And(Expression: TExpression): iManager<TCaixa>;
+    function _Or(Expression: TExpression): iManager<TCaixa>;
+    function Count: Integer;
+    function OrderBy(Column: String; Asc: Boolean = True): iManager<TCaixa>;
+  end;
+
+implementation
+
+{ TManagerCaixa<TCaixa> }
+
+function TManagerCaixa<TCaixa>.Count: Integer;
+begin
+
+end;
+
+function TManagerCaixa<TCaixa>.Find(ID: Variant): TCaixa;
+begin
+
+end;
+
+function TManagerCaixa<TCaixa>.Find: TObjectList<TCaixa>;
+begin
+
+end;
+
+function TManagerCaixa<TCaixa>.List: TObjectList<TCaixa>;
+begin
+
+end;
+
+function TManagerCaixa<TCaixa>.OrderBy(Column: String; Asc: Boolean)
+  : iManager<TCaixa>;
+begin
+
+end;
+
+procedure TManagerCaixa<TCaixa>.Remove;
+begin
+
+end;
+
+procedure TManagerCaixa<TCaixa>.Save;
+begin
+
+end;
+
+procedure TManagerCaixa<TCaixa>.Update;
+begin
+
+end;
+
+function TManagerCaixa<TCaixa>.Where(Expression: TExpression): iManager<TCaixa>;
+begin
+
+end;
+
+function TManagerCaixa<TCaixa>._And(Expression: TExpression): iManager<TCaixa>;
+begin
+
+end;
+
+function TManagerCaixa<TCaixa>._Or(Expression: TExpression): iManager<TCaixa>;
+begin
+
+end;
+
+end.

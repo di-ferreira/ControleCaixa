@@ -1,0 +1,7 @@
+unit Model.Entidade.Caixa;
+
+interface
+
+implementation
+
+end.

@@ -1,0 +1,25 @@
+unit Manager.Interfaces;
+
+interface
+
+uses
+  System.Generics.Collections,
+  Manager.Types;
+
+type
+  iManager<T: class> = interface
+    procedure Save(Entity: T);
+    procedure Update(Entity: T);
+    procedure Remove(Entity: T);
+    function Find: TObjectList<T>; overload;
+    function Find(ID: Variant): T; overload;
+    function Find(AClass: TClass): iManager<T>; overload;
+    function Where(Expression: TExpression): iManager<T>;
+    function _And(Expression: TExpression): iManager<T>;
+    function _Or(Expression: TExpression): iManager<T>;
+    function Count: Integer;
+  end;
+
+implementation
+
+end.
