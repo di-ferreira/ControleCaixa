@@ -15,6 +15,7 @@ type
     function DataSet(DataSet: TFDQuery): iManager<T>;
     function List: TObjectList<T>;
     function UniqueResult: T;
+    function ResultLastInsert:T;
     function Find: iManager<T>; overload;
     function Find(ID: Variant): T; overload;
     function Where(Expression: TExpression): iManager<T>;

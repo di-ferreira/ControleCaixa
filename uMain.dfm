@@ -17,9 +17,9 @@ object Form1: TForm1
   TextHeight = 13
   object btnCaixa: TButton
     Left = 8
-    Top = 22
+    Top = 8
     Width = 178
-    Height = 51
+    Height = 33
     Caption = 'Abrir Caixa'
     TabOrder = 0
     OnClick = btnCaixaClick
@@ -38,10 +38,44 @@ object Form1: TForm1
     TitleFont.Name = 'Tahoma'
     TitleFont.Style = []
   end
+  object Open: TDateTimePicker
+    Left = 192
+    Top = 37
+    Width = 145
+    Height = 21
+    Date = 44673.000000000000000000
+    Time = 0.639519421296427000
+    TabOrder = 2
+  end
+  object EdtOpen: TEdit
+    Left = 512
+    Top = 37
+    Width = 83
+    Height = 21
+    TabOrder = 3
+  end
+  object Close: TDateTimePicker
+    Left = 352
+    Top = 37
+    Width = 145
+    Height = 21
+    Date = 44673.000000000000000000
+    Time = 0.639519421296427000
+    TabOrder = 4
+  end
+  object Button1: TButton
+    Left = 8
+    Top = 47
+    Width = 178
+    Height = 34
+    Caption = 'Listar Caixa'
+    TabOrder = 5
+    OnClick = Button1Click
+  end
   object DataSource1: TDataSource
     DataSet = FDQuery1
-    Left = 232
-    Top = 32
+    Left = 312
+    Top = 192
   end
   object FDConnection1: TFDConnection
     Params.Strings = (
@@ -49,14 +83,14 @@ object Form1: TForm1
       'DriverID=SQLite')
     Connected = True
     LoginPrompt = False
-    Left = 392
-    Top = 40
+    Left = 400
+    Top = 200
   end
   object FDQuery1: TFDQuery
     Connection = FDConnection1
     SQL.Strings = (
       'select * from CAIXA')
-    Left = 520
-    Top = 32
+    Left = 472
+    Top = 208
   end
 end

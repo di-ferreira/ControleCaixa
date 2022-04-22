@@ -5,10 +5,13 @@ interface
 type
   TCaixa = class
   private
+    FID: Integer;
     FFechamento: TDateTime;
     FTotal: Currency;
     FAbertura: TDateTime;
   public
+    function ID: Integer; overload;
+    function ID(Value: Integer): TCaixa; overload;
     function Abertura: TDateTime; overload;
     function Abertura(Date: TDateTime): TCaixa; overload;
     function Fechamento: TDateTime; overload;
@@ -41,6 +44,17 @@ function TCaixa.Fechamento(Date: TDateTime): TCaixa;
 begin
   FFechamento := Date;
   Result := Self;
+end;
+
+function TCaixa.ID(Value: Integer): TCaixa;
+begin
+  FID := Value;
+  Result := Self;
+end;
+
+function TCaixa.ID: Integer;
+begin
+  Result := FID;
 end;
 
 function TCaixa.Total: Currency;

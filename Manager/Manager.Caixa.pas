@@ -6,10 +6,9 @@ uses
   Data.DB,
   DTO.Caixa,
   Manager.Types,
-  System.SysUtils,
   Manager.Interfaces,
   System.Generics.Collections,
-  FireDAC.Comp.Client;
+  FireDAC.Comp.Client, Vcl.Dialogs;
 
 type
   TManagerCaixa = class(TInterfacedObject, iManager<TCaixa>)
@@ -28,6 +27,7 @@ type
     function DataSet(DataSet: TFDQuery): iManager<TCaixa>;
     function List: TObjectList<TCaixa>;
     function UniqueResult: TCaixa;
+    function ResultLastInsert: TCaixa;
     function Find: iManager<TCaixa>; overload;
     function Find(ID: Variant): TCaixa; overload;
     function Where(Expression: TExpression): iManager<TCaixa>;
@@ -40,6 +40,9 @@ type
   end;
 
 implementation
+
+uses
+  System.SysUtils;
 
 { TManagerCaixa }
 
@@ -77,7 +80,13 @@ end;
 
 function TManagerCaixa.Find(ID: Variant): TCaixa;
 begin
-
+  FDataSet.SQL.Clear;
+  FDataSet.SQL.Add('select * from CAIXA WHERE ID=' + ID);
+  FDataSet.Open;
+  FCaixa.ID(FDataSet.ParamByName('ID').Value)
+    .Abertura(FDataSet.ParamByName('OPENED_IN').Value)
+    .Fechamento(FDataSet.ParamByName('CLOSED_IN').Value);
+  Result := FCaixa;
 end;
 
 function TManagerCaixa.Find: iManager<TCaixa>;
@@ -108,11 +117,44 @@ begin
 
 end;
 
-procedure TManagerCaixa.Save;
+function TManagerCaixa.ResultLastInsert: TCaixa;
 begin
-  // FSQL := '';
-  FSQL := 'INSERT INTO caixa VALUES(NULL, ' + DateToStr(FCaixa.Abertura) + ', '
-    + DateToStr(FCaixa.Fechamento) + ', ' + CurrToStr(FCaixa.Total) + ')';
+  FSQL := 'SELECT *FROM CAIXA WHERE ID = (SELECT MAX(ID) FROM CAIXA)';
+  FDataSet.Close;
+  FDataSet.SQL.Clear;
+  FDataSet.SQL.Add(FSQL);
+  FDataSet.Open;
+  FCaixa.ID(FDataSet.FieldByName('ID').Value)
+    .Abertura(FDataSet.FieldByName('OPENED_IN').Value);
+//    FCaixa.Fechamento(FDataSet.FieldByName('CLOSED_IN').Value);
+  Result := FCaixa;
+end;
+
+procedure TManagerCaixa.Save;
+var
+  vTotal, DateClose, DateOpen: String;
+begin
+  DateClose := 'Null';
+  DateOpen := QuotedStr(FormatDateTime('YYYY-MM-DD HH:mm:ss', FCaixa.Abertura));
+  vTotal := StringReplace(FloatToStr(FCaixa.Total), ',', '.', [rfReplaceAll]);
+
+  if (FormatDateTime('yyyy/mm/dd', FCaixa.Fechamento) >
+    FormatDateTime('yyyy/mm/dd', Date)) then
+    DateClose := QuotedStr(FormatDateTime('YYYY-MM-DD HH:mm:ss',
+      FCaixa.Fechamento));
+
+  try
+    FSQL := 'INSERT INTO CAIXA ( ID, OPENED_IN, CLOSED_IN, Total)VALUES(Null,' +
+      DateOpen + ', ' + DateClose + ', ' + vTotal + ')';
+
+    FDataSet.Close;
+    FDataSet.SQL.Clear;
+    FDataSet.SQL.Add(FSQL);
+    FDataSet.ExecSQL;
+  Except
+    on E: Exception do
+      ShowMessage('Erro ao salvar dados: ' + E.Message);
+  end;
 end;
 
 function TManagerCaixa.UniqueResult: TCaixa;
