@@ -110,6 +110,8 @@
         <DCCReference Include="Manager\Manager.Types.pas"/>
         <DCCReference Include="Manager\Manager.Caixa.pas"/>
         <DCCReference Include="Controller\Controller.pas"/>
+        <DCCReference Include="Connection\Connection.Interfaces.pas"/>
+        <DCCReference Include="Connection\Connection.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

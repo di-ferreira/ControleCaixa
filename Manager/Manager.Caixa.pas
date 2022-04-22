@@ -3,17 +3,21 @@ unit Manager.Caixa;
 interface
 
 uses
+  Data.DB,
   DTO.Caixa,
-  Manager.Interfaces,
   Manager.Types,
-  System.Generics.Collections,
-  System.SysUtils;
+  System.SysUtils,
+  Manager.Interfaces,
+  Connection.Interfaces,
+  System.Generics.Collections, Connection;
 
 type
   TManagerCaixa = class(TInterfacedObject, iManager<TCaixa>)
   private
     FSQL: String;
     FCaixa: TCaixa;
+    FDataSet: TDataSet;
+    FConn: iConnection;
   public
     constructor Create;
     destructor Destroy; override;
@@ -22,8 +26,10 @@ type
     procedure Save;
     procedure Update;
     procedure Remove;
+    function DataSet(DataSource: TDataSource): iManager<TCaixa>;
     function List: TObjectList<TCaixa>;
-    function Find: TObjectList<TCaixa>; overload;
+    function UniqueResult: TCaixa;
+    function Find: iManager<TCaixa>; overload;
     function Find(ID: Variant): TCaixa; overload;
     function Where(Expression: TExpression): iManager<TCaixa>;
     function _And(Expression: TExpression): iManager<TCaixa>;
@@ -50,12 +56,24 @@ end;
 
 constructor TManagerCaixa.Create;
 begin
+  FConn := TConnection.New;
   FCaixa := TCaixa.Create;
+end;
+
+function TManagerCaixa.DataSet(DataSource: TDataSource): iManager<TCaixa>;
+begin
+  Result := Self;
+  FConn.DataSet(DataSource);
+  // if not Assigned(FDataSet) then
+  // FDataSet := FConn.DataSet;
+  //
+  // DataSource.DataSet := FDataSet;
 end;
 
 destructor TManagerCaixa.Destroy;
 begin
   FCaixa.Free;
+  FDataSet.Free;
   inherited;
 end;
 
@@ -69,9 +87,12 @@ begin
 
 end;
 
-function TManagerCaixa.Find: TObjectList<TCaixa>;
+function TManagerCaixa.Find: iManager<TCaixa>;
 begin
-
+  Result := Self;
+  FConn.SQL('select * from CAIXA').OpenDataSet;
+  // FDataSet := FConn.SQL('SELECT * FROM CAIXA').DataSet;
+  // FDataSet.Open;
 end;
 
 function TManagerCaixa.List: TObjectList<TCaixa>;
@@ -96,9 +117,14 @@ end;
 
 procedure TManagerCaixa.Save;
 begin
-//  FSQL := '';
+  // FSQL := '';
   FSQL := 'INSERT INTO caixa VALUES(NULL, ' + DateToStr(FCaixa.Abertura) + ', '
     + DateToStr(FCaixa.Fechamento) + ', ' + CurrToStr(FCaixa.Total) + ')';
+end;
+
+function TManagerCaixa.UniqueResult: TCaixa;
+begin
+
 end;
 
 procedure TManagerCaixa.Update;

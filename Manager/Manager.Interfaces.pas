@@ -4,7 +4,7 @@ interface
 
 uses
   System.Generics.Collections,
-  Manager.Types;
+  Manager.Types, Data.DB;
 
 type
   iManager<T: class> = interface
@@ -12,8 +12,10 @@ type
     procedure Save;
     procedure Update;
     procedure Remove;
+    function DataSet(DataSource: TDataSource): iManager<T>;
     function List: TObjectList<T>;
-    function Find: TObjectList<T>; overload;
+    function UniqueResult: T;
+    function Find: iManager<T>; overload;
     function Find(ID: Variant): T; overload;
     function Where(Expression: TExpression): iManager<T>;
     function _And(Expression: TExpression): iManager<T>;

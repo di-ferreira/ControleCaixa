@@ -1,11 +1,6 @@
 program CC;
 
 uses
-  madExcept,
-  madLinkDisAsm,
-  madListHardware,
-  madListProcesses,
-  madListModules,
   Vcl.Forms,
   uMain in 'uMain.pas' {Form1},
   DTO.Caixa in 'Classes\DTO.Caixa.pas',
@@ -13,7 +8,9 @@ uses
   Manager.Interfaces in 'Manager\Manager.Interfaces.pas',
   Manager.Types in 'Manager\Manager.Types.pas',
   Manager.Caixa in 'Manager\Manager.Caixa.pas',
-  Controller in 'Controller\Controller.pas';
+  Controller in 'Controller\Controller.pas',
+  Connection.Interfaces in 'Connection\Connection.Interfaces.pas',
+  Connection in 'Connection\Connection.pas';
 
 {$R *.res}
 
@@ -22,4 +19,5 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TForm1, Form1);
   Application.Run;
+
 end.
