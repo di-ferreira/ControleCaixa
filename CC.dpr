@@ -1,6 +1,11 @@
 program CC;
 
 uses
+  madExcept,
+  madLinkDisAsm,
+  madListHardware,
+  madListProcesses,
+  madListModules,
   Vcl.Forms,
   uMain in 'uMain.pas' {Form1},
   DTO.Caixa in 'Classes\DTO.Caixa.pas',

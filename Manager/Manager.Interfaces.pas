@@ -4,7 +4,7 @@ interface
 
 uses
   System.Generics.Collections,
-  Manager.Types, Data.DB;
+  Manager.Types, Data.DB, FireDAC.Comp.Client;
 
 type
   iManager<T: class> = interface
@@ -12,7 +12,7 @@ type
     procedure Save;
     procedure Update;
     procedure Remove;
-    function DataSet(DataSource: TDataSource): iManager<T>;
+    function DataSet(DataSet: TFDQuery): iManager<T>;
     function List: TObjectList<T>;
     function UniqueResult: T;
     function Find: iManager<T>; overload;

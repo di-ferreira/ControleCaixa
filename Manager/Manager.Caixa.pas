@@ -8,16 +8,15 @@ uses
   Manager.Types,
   System.SysUtils,
   Manager.Interfaces,
-  Connection.Interfaces,
-  System.Generics.Collections, Connection;
+  System.Generics.Collections,
+  FireDAC.Comp.Client;
 
 type
   TManagerCaixa = class(TInterfacedObject, iManager<TCaixa>)
   private
     FSQL: String;
     FCaixa: TCaixa;
-    FDataSet: TDataSet;
-    FConn: iConnection;
+    FDataSet: TFDQuery;
   public
     constructor Create;
     destructor Destroy; override;
@@ -26,7 +25,7 @@ type
     procedure Save;
     procedure Update;
     procedure Remove;
-    function DataSet(DataSource: TDataSource): iManager<TCaixa>;
+    function DataSet(DataSet: TFDQuery): iManager<TCaixa>;
     function List: TObjectList<TCaixa>;
     function UniqueResult: TCaixa;
     function Find: iManager<TCaixa>; overload;
@@ -56,24 +55,18 @@ end;
 
 constructor TManagerCaixa.Create;
 begin
-  FConn := TConnection.New;
   FCaixa := TCaixa.Create;
 end;
 
-function TManagerCaixa.DataSet(DataSource: TDataSource): iManager<TCaixa>;
+function TManagerCaixa.DataSet(DataSet: TFDQuery): iManager<TCaixa>;
 begin
   Result := Self;
-  FConn.DataSet(DataSource);
-  // if not Assigned(FDataSet) then
-  // FDataSet := FConn.DataSet;
-  //
-  // DataSource.DataSet := FDataSet;
+  FDataSet := DataSet;
 end;
 
 destructor TManagerCaixa.Destroy;
 begin
   FCaixa.Free;
-  FDataSet.Free;
   inherited;
 end;
 
@@ -90,9 +83,9 @@ end;
 function TManagerCaixa.Find: iManager<TCaixa>;
 begin
   Result := Self;
-  FConn.SQL('select * from CAIXA').OpenDataSet;
-  // FDataSet := FConn.SQL('SELECT * FROM CAIXA').DataSet;
-  // FDataSet.Open;
+  FDataSet.SQL.Clear;
+  FDataSet.SQL.Add('select * from CAIXA');
+  FDataSet.Open;
 end;
 
 function TManagerCaixa.List: TObjectList<TCaixa>;

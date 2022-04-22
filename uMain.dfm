@@ -11,6 +11,8 @@ object Form1: TForm1
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object btnCaixa: TButton
@@ -37,19 +39,24 @@ object Form1: TForm1
     TitleFont.Style = []
   end
   object DataSource1: TDataSource
+    DataSet = FDQuery1
     Left = 232
     Top = 32
   end
   object FDConnection1: TFDConnection
     Params.Strings = (
-      'Database=C:\Projects\Delphi\ControleCaixa\DB\DADOS.SDB'
+      'Database=C:\Users\alex\Documents\ControleCaixa\DB\DADOS.DB'
       'DriverID=SQLite')
-    Left = 296
-    Top = 200
+    Connected = True
+    LoginPrompt = False
+    Left = 392
+    Top = 40
   end
   object FDQuery1: TFDQuery
     Connection = FDConnection1
-    Left = 328
-    Top = 120
+    SQL.Strings = (
+      'select * from CAIXA')
+    Left = 520
+    Top = 32
   end
 end

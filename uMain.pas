@@ -29,6 +29,8 @@ type
     FDConnection1: TFDConnection;
     FDQuery1: TFDQuery;
     procedure btnCaixaClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     pController: TController;
   public
@@ -46,15 +48,19 @@ procedure TForm1.btnCaixaClick(Sender: TObject);
 var
   iCaixa: iManager<TCaixa>;
 begin
-  // iCaixa := TManagerCaixa.New;
-  DBGrid1.DataSource := DataSource1;
-  DataSource1.DataSet := FDQuery1;
+  iCaixa := TManagerCaixa.New;
+  iCaixa.DataSet(FDQuery1).Find;
+end;
 
-  FDQuery1.Connection := FDConnection1;
-  FDQuery1.SQL.Add('select * from CAIXA');
-  FDConnection1.Connected := true;
-  FDQuery1.Open;
-  // iCaixa.DataSet(DataSource1).Find;
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  if FDConnection1.Connected then
+    FDConnection1.Connected := true;
+end;
+
+procedure TForm1.FormDestroy(Sender: TObject);
+begin
+  FDConnection1.Connected := False;
 end;
 
 end.
