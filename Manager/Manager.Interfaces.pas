@@ -15,12 +15,12 @@ type
     function DataSet(DataSet: TFDQuery): iManager<T>;
     function List: TObjectList<T>;
     function UniqueResult: T;
-    function ResultLastInsert:T;
+    function ResultLastInsert: T;
     function Find: iManager<T>; overload;
-    function Find(ID: Variant): T; overload;
-    function Where(Expression: TExpression): iManager<T>;
-    function _And(Expression: TExpression): iManager<T>;
-    function _Or(Expression: TExpression): iManager<T>;
+    function FindOne(ID: Variant): T; overload;
+    function Where(Column: String; aValue: Variant): iManager<T>;
+    function _And(Column: String; aValue: Variant): iManager<T>;
+    function _Or(Column: String; aValue: Variant): iManager<T>;
     function Count: Integer;
     function OrderBy(Column: String; Asc: Boolean = True): iManager<T>;
 

@@ -5,7 +5,6 @@ interface
 uses
   Winapi.Windows,
   Winapi.Messages,
-  System.SysUtils,
   System.Variants,
   System.Classes,
   Vcl.Graphics,
@@ -23,7 +22,6 @@ uses
 
 type
   TForm1 = class(TForm)
-    btnCaixa: TButton;
     DBGrid1: TDBGrid;
     DataSource1: TDataSource;
     FDConnection1: TFDConnection;
@@ -32,13 +30,24 @@ type
     EdtOpen: TEdit;
     Close: TDateTimePicker;
     Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    btnCaixa: TButton;
+    Button4: TButton;
     procedure btnCaixaClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure DBGrid1DblClick(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
+    pCaixa: iManager<TCaixa>;
     procedure AbrirCaixa;
     procedure CarregarCaixas;
+    procedure AtualizaCaixa;
+    procedure RemoverCaixa;
   public
     { Public declarations }
   end;
@@ -48,20 +57,27 @@ var
 
 implementation
 
+uses
+  System.SysUtils;
+
 {$R *.dfm}
 
 procedure TForm1.AbrirCaixa;
-var
-  iCaixa: iManager<TCaixa>;
 begin
-  iCaixa := TManagerCaixa.New;
-  iCaixa.DataSet(FDQuery1).This.Abertura(StrToDateTime('21/03/2022 15:25'))
-    .Total(1000.70);
-  iCaixa.Save;
-  Open.DateTime := iCaixa.ResultLastInsert.Abertura;
- // Close.DateTime := iCaixa.ResultLastInsert.Fechamento;
+  pCaixa.DataSet(FDQuery1).This.Abertura(Open.DateTime)
+    .Fechamento(Close.DateTime).Total(StrToFloat(EdtOpen.Text));
 
-  EdtOpen.Text := CurrToStr(iCaixa.ResultLastInsert.Total);
+  pCaixa.Save;
+
+  CarregarCaixas;
+end;
+
+procedure TForm1.AtualizaCaixa;
+begin
+  pCaixa.This.Abertura(Open.DateTime);
+  pCaixa.This.Fechamento(Close.DateTime);
+  pCaixa.This.Total(StrToCurr(EdtOpen.Text));
+  pCaixa.Update;
   CarregarCaixas;
 end;
 
@@ -75,23 +91,56 @@ begin
   CarregarCaixas;
 end;
 
-procedure TForm1.CarregarCaixas;
-var
-  iCaixa: iManager<TCaixa>;
+procedure TForm1.Button2Click(Sender: TObject);
 begin
-  iCaixa := TManagerCaixa.New;
-  iCaixa.DataSet(FDQuery1).Find;
+  AtualizaCaixa;
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+begin
+  RemoverCaixa;
+end;
+
+procedure TForm1.Button4Click(Sender: TObject);
+begin
+  EdtOpen.Text := pCaixa.Count.ToString;
+end;
+
+procedure TForm1.CarregarCaixas;
+begin
+  pCaixa.DataSet(FDQuery1).Find;
+end;
+
+procedure TForm1.DBGrid1DblClick(Sender: TObject);
+var
+  CurrentID: Integer;
+begin
+  CurrentID := DBGrid1.DataSource.DataSet.FieldByName('ID').Value;
+
+  pCaixa.DataSet(FDQuery1).FindOne(CurrentID);
+  Open.DateTime := pCaixa.This.Abertura;
+  Close.DateTime := pCaixa.This.Fechamento;
+  EdtOpen.Text := CurrToStr(pCaixa.This.Total);
+  CarregarCaixas;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   if FDConnection1.Connected then
     FDConnection1.Connected := true;
+
+  pCaixa := TManagerCaixa.New;
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
   FDConnection1.Connected := False;
+end;
+
+procedure TForm1.RemoverCaixa;
+begin
+  pCaixa.Remove;
+  CarregarCaixas;
 end;
 
 end.

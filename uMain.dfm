@@ -15,62 +15,90 @@ object Form1: TForm1
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
-  object btnCaixa: TButton
-    Left = 8
-    Top = 8
-    Width = 178
-    Height = 33
-    Caption = 'Abrir Caixa'
-    TabOrder = 0
-    OnClick = btnCaixaClick
-  end
   object DBGrid1: TDBGrid
     Left = 0
-    Top = 104
+    Top = 136
     Width = 603
-    Height = 290
+    Height = 258
     Align = alBottom
     DataSource = DataSource1
-    TabOrder = 1
+    TabOrder = 0
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11
     TitleFont.Name = 'Tahoma'
     TitleFont.Style = []
+    OnDblClick = DBGrid1DblClick
   end
   object Open: TDateTimePicker
-    Left = 192
+    Left = 8
     Top = 37
     Width = 145
     Height = 21
     Date = 44673.000000000000000000
     Time = 0.639519421296427000
-    TabOrder = 2
+    TabOrder = 1
   end
   object EdtOpen: TEdit
-    Left = 512
+    Left = 328
     Top = 37
     Width = 83
     Height = 21
-    TabOrder = 3
+    TabOrder = 2
   end
   object Close: TDateTimePicker
-    Left = 352
+    Left = 168
     Top = 37
     Width = 145
     Height = 21
     Date = 44673.000000000000000000
     Time = 0.639519421296427000
-    TabOrder = 4
+    TabOrder = 3
   end
   object Button1: TButton
-    Left = 8
-    Top = 47
-    Width = 178
+    Left = 5
+    Top = 79
+    Width = 150
     Height = 34
     Caption = 'Listar Caixa'
-    TabOrder = 5
+    TabOrder = 4
     OnClick = Button1Click
+  end
+  object Button2: TButton
+    Left = 163
+    Top = 79
+    Width = 150
+    Height = 34
+    Caption = 'Atualizar Caixa'
+    TabOrder = 5
+    OnClick = Button2Click
+  end
+  object Button3: TButton
+    Left = 328
+    Top = 79
+    Width = 150
+    Height = 34
+    Caption = 'Remover Caixa'
+    TabOrder = 6
+    OnClick = Button3Click
+  end
+  object btnCaixa: TButton
+    Left = 504
+    Top = 25
+    Width = 91
+    Height = 72
+    Caption = 'Abrir Caixa'
+    TabOrder = 7
+    OnClick = btnCaixaClick
+  end
+  object Button4: TButton
+    Left = 504
+    Top = 103
+    Width = 91
+    Height = 27
+    Caption = 'Count Caixa'
+    TabOrder = 8
+    OnClick = Button4Click
   end
   object DataSource1: TDataSource
     DataSet = FDQuery1
@@ -79,9 +107,8 @@ object Form1: TForm1
   end
   object FDConnection1: TFDConnection
     Params.Strings = (
-      'Database=C:\Users\alex\Documents\ControleCaixa\DB\DADOS.DB'
+      'Database=C:\Projects\Delphi\ControleCaixa\DB\DADOS.DB'
       'DriverID=SQLite')
-    Connected = True
     LoginPrompt = False
     Left = 400
     Top = 200

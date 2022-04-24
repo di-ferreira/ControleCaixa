@@ -29,10 +29,10 @@ type
     function UniqueResult: TCaixa;
     function ResultLastInsert: TCaixa;
     function Find: iManager<TCaixa>; overload;
-    function Find(ID: Variant): TCaixa; overload;
-    function Where(Expression: TExpression): iManager<TCaixa>;
-    function _And(Expression: TExpression): iManager<TCaixa>;
-    function _Or(Expression: TExpression): iManager<TCaixa>;
+    function FindOne(ID: Variant): TCaixa; overload;
+    function Where(Column: String; aValue: Variant): iManager<TCaixa>;
+    function _And(Column: String; aValue: Variant): iManager<TCaixa>;
+    function _Or(Column: String; aValue: Variant): iManager<TCaixa>;
     function Count: Integer;
     function OrderBy(Column: String; Asc: Boolean = True): iManager<TCaixa>;
 
@@ -53,7 +53,7 @@ end;
 
 function TManagerCaixa.Count: Integer;
 begin
-
+  Result := FDataSet.RecordCount;
 end;
 
 constructor TManagerCaixa.Create;
@@ -78,22 +78,28 @@ begin
   Result := FSQL;
 end;
 
-function TManagerCaixa.Find(ID: Variant): TCaixa;
+function TManagerCaixa.FindOne(ID: Variant): TCaixa;
+var
+  vID: String;
 begin
+  vID := String(ID);
   FDataSet.SQL.Clear;
-  FDataSet.SQL.Add('select * from CAIXA WHERE ID=' + ID);
+  FDataSet.SQL.Add('select * from CAIXA WHERE ID=' + vID);
   FDataSet.Open;
-  FCaixa.ID(FDataSet.ParamByName('ID').Value)
-    .Abertura(FDataSet.ParamByName('OPENED_IN').Value)
-    .Fechamento(FDataSet.ParamByName('CLOSED_IN').Value);
+  FCaixa.ID(FDataSet.FieldByName('ID').AsInteger)
+    .Abertura(FDataSet.FieldByName('OPENED_IN').AsDateTime)
+    .Fechamento(FDataSet.FieldByName('CLOSED_IN').AsDateTime)
+    .Total(FDataSet.FieldByName('TOTAL').AsCurrency);
+
   Result := FCaixa;
 end;
 
 function TManagerCaixa.Find: iManager<TCaixa>;
 begin
   Result := Self;
+  FSQL := 'SELECT * FROM CAIXA';
   FDataSet.SQL.Clear;
-  FDataSet.SQL.Add('select * from CAIXA');
+  FDataSet.SQL.Add(FSQL);
   FDataSet.Open;
 end;
 
@@ -114,7 +120,17 @@ end;
 
 procedure TManagerCaixa.Remove;
 begin
+  try
+    FSQL := 'DELETE FROM CAIXA WHERE ID = ' + FCaixa.ID.ToString;
 
+    FDataSet.Close;
+    FDataSet.SQL.Clear;
+    FDataSet.SQL.Add(FSQL);
+    FDataSet.ExecSQL;
+  Except
+    on E: Exception do
+      ShowMessage('Erro ao remover dados: ' + E.Message);
+  end;
 end;
 
 function TManagerCaixa.ResultLastInsert: TCaixa;
@@ -126,7 +142,7 @@ begin
   FDataSet.Open;
   FCaixa.ID(FDataSet.FieldByName('ID').Value)
     .Abertura(FDataSet.FieldByName('OPENED_IN').Value);
-//    FCaixa.Fechamento(FDataSet.FieldByName('CLOSED_IN').Value);
+  // FCaixa.Fechamento(FDataSet.FieldByName('CLOSED_IN').Value);
   Result := FCaixa;
 end;
 
@@ -138,8 +154,7 @@ begin
   DateOpen := QuotedStr(FormatDateTime('YYYY-MM-DD HH:mm:ss', FCaixa.Abertura));
   vTotal := StringReplace(FloatToStr(FCaixa.Total), ',', '.', [rfReplaceAll]);
 
-  if (FormatDateTime('yyyy/mm/dd', FCaixa.Fechamento) >
-    FormatDateTime('yyyy/mm/dd', Date)) then
+  if DateTimeToStr(FCaixa.Fechamento) = '' then
     DateClose := QuotedStr(FormatDateTime('YYYY-MM-DD HH:mm:ss',
       FCaixa.Fechamento));
 
@@ -163,21 +178,47 @@ begin
 end;
 
 procedure TManagerCaixa.Update;
+var
+  vTotal, DateClose, DateOpen: String;
+begin
+  DateClose := 'Null';
+  DateOpen := QuotedStr(FormatDateTime('YYYY-MM-DD HH:mm:ss', FCaixa.Abertura));
+  vTotal := StringReplace(FloatToStr(FCaixa.Total), ',', '.', [rfReplaceAll]);
+
+  if DateTimeToStr(FCaixa.Fechamento) <> '' then
+    DateClose := QuotedStr(FormatDateTime('YYYY-MM-DD HH:mm:ss',
+      FCaixa.Fechamento));
+
+  try
+    FSQL := 'UPDATE CAIXA SET OPENED_IN = ' + DateOpen + ', CLOSED_IN = ' +
+      DateClose + ', ' + 'TOTAL = ' + vTotal + ' WHERE ID = ' +
+      FCaixa.ID.ToString;
+
+    FDataSet.Close;
+    FDataSet.SQL.Clear;
+    FDataSet.SQL.Add(FSQL);
+    FDataSet.ExecSQL;
+  Except
+    on E: Exception do
+      ShowMessage('Erro ao atualizar dados: ' + E.Message);
+  end;
+end;
+
+function TManagerCaixa.Where(Column: String; aValue: Variant): iManager<TCaixa>;
+begin
+  Result := Self;
+  FSQL := FSQL + ' WHERE ' + Column + '=' + QuotedStr(aValue);
+  FDataSet.SQL.Clear;
+  FDataSet.SQL.Add(FSQL);
+  FDataSet.Open;
+end;
+
+function TManagerCaixa._And(Column: String; aValue: Variant): iManager<TCaixa>;
 begin
 
 end;
 
-function TManagerCaixa.Where(Expression: TExpression): iManager<TCaixa>;
-begin
-
-end;
-
-function TManagerCaixa._And(Expression: TExpression): iManager<TCaixa>;
-begin
-
-end;
-
-function TManagerCaixa._Or(Expression: TExpression): iManager<TCaixa>;
+function TManagerCaixa._Or(Column: String; aValue: Variant): iManager<TCaixa>;
 begin
 
 end;
