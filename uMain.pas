@@ -11,14 +11,35 @@ uses
   Vcl.Controls,
   Vcl.Forms,
   Vcl.Dialogs,
-  Manager.Caixa, Vcl.StdCtrls, DTO.Caixa, Manager.Interfaces,
-  Data.DB, Vcl.Grids, Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option,
-  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
-  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
-  FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
-  FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.SQLite,
-  FireDAC.Phys.SQLiteDef, FireDAC.Stan.ExprFuncs,
-  FireDAC.Phys.SQLiteWrapper.Stat, Vcl.ComCtrls;
+  Manager.Caixa,
+  Vcl.StdCtrls,
+  DTO.Caixa,
+  Manager.Interfaces,
+  Data.DB,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  FireDAC.Stan.Intf,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Error,
+  FireDAC.UI.Intf,
+  FireDAC.Phys.Intf,
+  FireDAC.Stan.Def,
+  FireDAC.Stan.Pool,
+  FireDAC.Stan.Async,
+  FireDAC.Phys,
+  FireDAC.VCLUI.Wait,
+  FireDAC.Comp.Client,
+  FireDAC.Stan.Param,
+  FireDAC.DatS,
+  FireDAC.DApt.Intf,
+  FireDAC.DApt,
+  FireDAC.Comp.DataSet,
+  FireDAC.Phys.SQLite,
+  FireDAC.Phys.SQLiteDef,
+  FireDAC.Stan.ExprFuncs,
+  FireDAC.Phys.SQLiteWrapper.Stat,
+  Vcl.ComCtrls,
+  Manager.Types;
 
 type
   TForm1 = class(TForm)
@@ -35,6 +56,8 @@ type
     btnCaixa: TButton;
     Button4: TButton;
     Edit1: TEdit;
+    CBOperador: TComboBox;
+    CBOrderBy: TComboBox;
     procedure btnCaixaClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -49,6 +72,10 @@ type
     procedure CarregarCaixas;
     procedure AtualizaCaixa;
     procedure RemoverCaixa;
+    procedure FillCombo(const pComboBox: TComboBox);
+    function TypeOperatorString(Const pType: tpFilterOperator): String;
+    procedure FillComboOrderBy(const pComboBox: TComboBox);
+    function TypeOrderByString(const pType: tpOrderDirection): String;
   public
     { Public declarations }
   end;
@@ -94,7 +121,13 @@ end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  pCaixa.DataSet(FDQuery1).Find.Where(EdtOpen.Text, Edit1.Text);
+
+  pCaixa
+    .DataSet(FDQuery1)
+    .Find
+    .Where(EdtOpen.Text,
+    tpFilterOperator(CBOperador.ItemIndex), Edit1.Text)
+    .OrderBy(EdtOpen.Text, tpOrderDirection(CBOrderBy.ItemIndex));
 
   // AtualizaCaixa;
 end;
@@ -127,12 +160,41 @@ begin
   CarregarCaixas;
 end;
 
+procedure TForm1.FillCombo(const pComboBox: TComboBox);
+var
+  iType: tpFilterOperator;
+begin
+  pComboBox.Items.Clear;
+  pComboBox.Items.BeginUpdate;
+  for iType := tpFilterOperator.Eq to tpFilterOperator.Between do
+  begin
+    pComboBox.Items.Add(TypeOperatorString(iType));
+  end;
+  pComboBox.Items.EndUpdate;
+end;
+
+procedure TForm1.FillComboOrderBy(const pComboBox: TComboBox);
+var
+  iType: tpOrderDirection;
+begin
+  pComboBox.Items.Clear;
+  pComboBox.Items.BeginUpdate;
+  for iType := tpOrderDirection.Asc to tpOrderDirection.Desc do
+  begin
+    pComboBox.Items.Add(TypeOrderByString(iType));
+  end;
+  pComboBox.Items.EndUpdate;
+end;
+
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   if FDConnection1.Connected then
     FDConnection1.Connected := true;
 
   pCaixa := TManagerCaixa.New;
+
+  FillCombo(CBOperador);
+  FillComboOrderBy(CBOrderBy);
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
@@ -144,6 +206,30 @@ procedure TForm1.RemoverCaixa;
 begin
   pCaixa.Remove;
   CarregarCaixas;
+end;
+
+function TForm1.TypeOperatorString(const pType: tpFilterOperator): String;
+const
+  cResults: array [tpFilterOperator] of string = (
+    { Eq } 'Igual',
+    { GreaterThan } 'Maior que',
+    { GreaterOrEqual } 'Maior ou Igual',
+    { LessThan } 'Menor que',
+    { LessOrEqual } 'Menor ou Igual',
+    { Like } 'Like',
+    { Different } 'Diferente de',
+    { Between } 'Entre');
+begin
+  Result := cResults[pType];
+end;
+
+function TForm1.TypeOrderByString(const pType: tpOrderDirection): String;
+const
+  cResults: array [tpOrderDirection] of string = (
+    { Asc } 'Asc',
+    { Desc } 'Desc');
+begin
+  Result := cResults[pType];
 end;
 
 end.

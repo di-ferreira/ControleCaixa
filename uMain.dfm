@@ -2,8 +2,8 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 394
-  ClientWidth = 603
+  ClientHeight = 403
+  ClientWidth = 733
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,8 +17,8 @@ object Form1: TForm1
   TextHeight = 13
   object DBGrid1: TDBGrid
     Left = 0
-    Top = 136
-    Width = 603
+    Top = 145
+    Width = 733
     Height = 258
     Align = alBottom
     DataSource = DataSource1
@@ -33,23 +33,23 @@ object Form1: TForm1
   object Open: TDateTimePicker
     Left = 8
     Top = 37
-    Width = 145
+    Width = 121
     Height = 21
     Date = 44673.000000000000000000
     Time = 0.639519421296427000
     TabOrder = 1
   end
   object EdtOpen: TEdit
-    Left = 328
+    Left = 263
     Top = 37
     Width = 83
     Height = 21
     TabOrder = 2
   end
   object Close: TDateTimePicker
-    Left = 168
+    Left = 144
     Top = 37
-    Width = 145
+    Width = 113
     Height = 21
     Date = 44673.000000000000000000
     Time = 0.639519421296427000
@@ -83,8 +83,8 @@ object Form1: TForm1
     OnClick = Button3Click
   end
   object btnCaixa: TButton
-    Left = 504
-    Top = 25
+    Left = 624
+    Top = 12
     Width = 91
     Height = 72
     Caption = 'Abrir Caixa'
@@ -93,19 +93,35 @@ object Form1: TForm1
   end
   object Button4: TButton
     Left = 504
-    Top = 103
-    Width = 91
-    Height = 27
+    Top = 79
+    Width = 114
+    Height = 34
     Caption = 'Count Caixa'
     TabOrder = 8
     OnClick = Button4Click
   end
   object Edit1: TEdit
-    Left = 417
+    Left = 463
     Top = 37
     Width = 83
     Height = 21
     TabOrder = 9
+  end
+  object CBOperador: TComboBox
+    Left = 357
+    Top = 37
+    Width = 100
+    Height = 21
+    TabOrder = 10
+    TextHint = 'Tipo de Opera'#231#227'o'
+  end
+  object CBOrderBy: TComboBox
+    Left = 552
+    Top = 37
+    Width = 66
+    Height = 21
+    TabOrder = 11
+    TextHint = 'Order By'
   end
   object DataSource1: TDataSource
     DataSet = FDQuery1
@@ -114,7 +130,7 @@ object Form1: TForm1
   end
   object FDConnection1: TFDConnection
     Params.Strings = (
-      'Database=C:\Projects\Delphi\ControleCaixa\DB\DADOS.DB'
+      'Database=C:\Users\alex\Documents\ControleCaixa\DB\DADOS.DB'
       'DriverID=SQLite')
     LoginPrompt = False
     Left = 400

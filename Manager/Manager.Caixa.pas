@@ -33,11 +33,15 @@ type
     function ResultLastInsert: TCaixa;
     function Find: iManager<TCaixa>; overload;
     function FindOne(ID: Variant): TCaixa; overload;
-    function Where(Column: String; aValue: Variant): iManager<TCaixa>;
-    function _And(Column: String; aValue: Variant): iManager<TCaixa>;
-    function _Or(Column: String; aValue: Variant): iManager<TCaixa>;
+    function Where(Column: String; FilterOperator: tpFilterOperator;
+      aValue: Variant): iManager<TCaixa>;
+    function _And(Column: String; FilterOperator: tpFilterOperator;
+      aValue: Variant): iManager<TCaixa>;
+    function _Or(Column: String; FilterOperator: tpFilterOperator;
+      aValue: Variant): iManager<TCaixa>;
     function Count: Integer;
-    function OrderBy(Column: String; Asc: Boolean = True): iManager<TCaixa>;
+    function OrderBy(Column: String;
+      Direction: tpOrderDirection = tpOrderDirection.Asc): iManager<TCaixa>;
 
     function Display: String;
   end;
@@ -107,8 +111,27 @@ begin
 end;
 
 function TManagerCaixa.List: TObjectList<TCaixa>;
+var
+  vLCaixa: TObjectList<TCaixa>;
+  I:Integer;
 begin
+  vLCaixa := TObjectList<TCaixa>.Create;
 
+  FSQL := 'SELECT * FROM CAIXA';
+  FDataSet.SQL.Clear;
+  FDataSet.SQL.Add(FSQL);
+  FDataSet.Open;
+
+  for I := 0 to FDataSet.RecordCount do
+   begin
+      vLCaixa[I]
+        .ID(FDataSet.FieldByName('ID').Value)
+        .Abertura(FDataSet.FieldByName('OPENED_IN').Value)
+        .Fechamento(FDataSet.FieldByName('CLOSED_IN').Value)
+        .Total(FDataSet.FieldByName('TOTAL').Value);
+   end;
+
+  Result := vLCaixa;
 end;
 
 class function TManagerCaixa.New: iManager<TCaixa>;
@@ -116,9 +139,19 @@ begin
   Result := Self.Create;
 end;
 
-function TManagerCaixa.OrderBy(Column: String; Asc: Boolean): iManager<TCaixa>;
+function TManagerCaixa.OrderBy(Column: String;
+  Direction: tpOrderDirection = tpOrderDirection.Asc): iManager<TCaixa>;
 begin
-
+  case Direction of
+    Asc:
+      FSQL := FSQL + ' ORDER BY ' + Column + ' ASC';
+    Desc:
+      FSQL := FSQL + ' ORDER BY ' + Column + ' DESC';
+  end;
+  FDataSet.SQL.Clear;
+  FDataSet.SQL.Add(FSQL);
+  FDataSet.Open;
+  Result := Self;
 end;
 
 procedure TManagerCaixa.Remove;
@@ -143,9 +176,11 @@ begin
   FDataSet.SQL.Clear;
   FDataSet.SQL.Add(FSQL);
   FDataSet.Open;
-  FCaixa.ID(FDataSet.FieldByName('ID').Value)
-    .Abertura(FDataSet.FieldByName('OPENED_IN').Value);
-  // FCaixa.Fechamento(FDataSet.FieldByName('CLOSED_IN').Value);
+  FCaixa
+    .ID(FDataSet.FieldByName('ID').Value)
+    .Abertura(FDataSet.FieldByName('OPENED_IN').Value)
+    .Fechamento(FDataSet.FieldByName('CLOSED_IN').Value)
+    .Total(FDataSet.FieldByName('TOTAL').Value);
   Result := FCaixa;
 end;
 
@@ -207,29 +242,49 @@ begin
   end;
 end;
 
-function TManagerCaixa.Where(Column: String; aValue: Variant): iManager<TCaixa>;
+function TManagerCaixa.Where(Column: String; FilterOperator: tpFilterOperator;
+  aValue: Variant): iManager<TCaixa>;
 var
   aTpColumn: tpColumn;
-  vExpression: String;
+  vExpression, vOperator: String;
 begin
   aTpColumn := tpColumn(GetEnumValue(TypeInfo(tpColumn), Column));
+
+  case FilterOperator of
+    Eq:
+      vOperator := ' = ';
+    GreaterThan:
+      vOperator := ' > ';
+    GreaterOrEqual:
+      vOperator := ' >= ';
+    LessThan:
+      vOperator := ' < ';
+    LessOrEqual:
+      vOperator := ' <= ';
+    Like:
+      vOperator := ' LIKE ';
+    Different:
+      vOperator := ' != ';
+    Between:
+      vOperator := ' BETWEEN ';
+  end;
 
   case aTpColumn of
     ID:
       begin
-        vExpression := 'ID = ' + Integer(aValue).ToString;
+        vExpression := 'ID' + vOperator + Integer(aValue).ToString;
       end;
 
     Abertura:
       begin
-        vExpression := 'OPENED_IN = ' +
+        vExpression := 'OPENED_IN' + vOperator +
           QuotedStr(FormatDateTime('YYYY-MM-DD HH:mm:ss',
           VarToDateTime(aValue)));
       end;
     Fechamento:
       begin
         if not(String(aValue) = '') then
-          vExpression := 'CLOSED_IN = ' +
+          vExpression := 'CLOSED_IN' + vOperator +
             QuotedStr(FormatDateTime('YYYY-MM-DD HH:mm:ss',
             VarToDateTime(aValue)))
         else
@@ -237,8 +292,8 @@ begin
       end;
     Total:
       begin
-        vExpression := 'TOTAL = ' + StringReplace(FloatToStr(Double(aValue)),
-          ',', '.', [rfReplaceAll]);
+        vExpression := 'TOTAL' + vOperator +
+          StringReplace(FloatToStr(Double(aValue)), ',', '.', [rfReplaceAll]);
       end;
   end;
 
@@ -250,14 +305,130 @@ begin
   FDataSet.Open;
 end;
 
-function TManagerCaixa._And(Column: String; aValue: Variant): iManager<TCaixa>;
+function TManagerCaixa._And(Column: String; FilterOperator: tpFilterOperator;
+  aValue: Variant): iManager<TCaixa>;
+var
+  aTpColumn: tpColumn;
+  vExpression, vOperator: String;
 begin
+  aTpColumn := tpColumn(GetEnumValue(TypeInfo(tpColumn), Column));
 
+  case FilterOperator of
+    Eq:
+      vOperator := ' = ';
+    GreaterThan:
+      vOperator := ' > ';
+    GreaterOrEqual:
+      vOperator := ' >= ';
+    LessThan:
+      vOperator := ' < ';
+    LessOrEqual:
+      vOperator := ' <= ';
+    Like:
+      vOperator := ' LIKE ';
+    Different:
+      vOperator := ' != ';
+    Between:
+      vOperator := ' BETWEEN ';
+  end;
+
+  case aTpColumn of
+    ID:
+      begin
+        vExpression := 'ID' + vOperator + Integer(aValue).ToString;
+      end;
+
+    Abertura:
+      begin
+        vExpression := 'OPENED_IN' + vOperator +
+          QuotedStr(FormatDateTime('YYYY-MM-DD HH:mm:ss',
+          VarToDateTime(aValue)));
+      end;
+    Fechamento:
+      begin
+        if not(String(aValue) = '') then
+          vExpression := 'CLOSED_IN' + vOperator +
+            QuotedStr(FormatDateTime('YYYY-MM-DD HH:mm:ss',
+            VarToDateTime(aValue)))
+        else
+          vExpression := 'CLOSED_IN is null';
+      end;
+    Total:
+      begin
+        vExpression := 'TOTAL' + vOperator +
+          StringReplace(FloatToStr(Double(aValue)), ',', '.', [rfReplaceAll]);
+      end;
+  end;
+
+  Result := Self;
+
+  FSQL := FSQL + ' AND ' + vExpression;
+  FDataSet.SQL.Clear;
+  FDataSet.SQL.Add(FSQL);
+  FDataSet.Open;
 end;
 
-function TManagerCaixa._Or(Column: String; aValue: Variant): iManager<TCaixa>;
+function TManagerCaixa._Or(Column: String; FilterOperator: tpFilterOperator;
+  aValue: Variant): iManager<TCaixa>;
+var
+  aTpColumn: tpColumn;
+  vExpression, vOperator: String;
 begin
+  aTpColumn := tpColumn(GetEnumValue(TypeInfo(tpColumn), Column));
 
+  case FilterOperator of
+    Eq:
+      vOperator := ' = ';
+    GreaterThan:
+      vOperator := ' > ';
+    GreaterOrEqual:
+      vOperator := ' >= ';
+    LessThan:
+      vOperator := ' < ';
+    LessOrEqual:
+      vOperator := ' <= ';
+    Like:
+      vOperator := ' LIKE ';
+    Different:
+      vOperator := ' != ';
+    Between:
+      vOperator := ' BETWEEN ';
+  end;
+
+  case aTpColumn of
+    ID:
+      begin
+        vExpression := 'ID' + vOperator + Integer(aValue).ToString;
+      end;
+
+    Abertura:
+      begin
+        vExpression := 'OPENED_IN' + vOperator +
+          QuotedStr(FormatDateTime('YYYY-MM-DD HH:mm:ss',
+          VarToDateTime(aValue)));
+      end;
+    Fechamento:
+      begin
+        if not(String(aValue) = '') then
+          vExpression := 'CLOSED_IN' + vOperator +
+            QuotedStr(FormatDateTime('YYYY-MM-DD HH:mm:ss',
+            VarToDateTime(aValue)))
+        else
+          vExpression := 'CLOSED_IN is null';
+      end;
+    Total:
+      begin
+        vExpression := 'TOTAL' + vOperator +
+          StringReplace(FloatToStr(Double(aValue)), ',', '.', [rfReplaceAll]);
+      end;
+  end;
+
+  Result := Self;
+
+  FSQL := FSQL + ' OR ' + vExpression;
+  FDataSet.SQL.Clear;
+  FDataSet.SQL.Add(FSQL);
+  FDataSet.Open;
 end;
 
 end.
