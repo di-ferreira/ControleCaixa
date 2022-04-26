@@ -34,6 +34,7 @@ type
     Button3: TButton;
     btnCaixa: TButton;
     Button4: TButton;
+    Edit1: TEdit;
     procedure btnCaixaClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -93,7 +94,9 @@ end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  AtualizaCaixa;
+  pCaixa.DataSet(FDQuery1).Find.Where(EdtOpen.Text, Edit1.Text);
+
+  // AtualizaCaixa;
 end;
 
 procedure TForm1.Button3Click(Sender: TObject);

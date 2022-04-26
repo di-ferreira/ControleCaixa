@@ -100,6 +100,13 @@ object Form1: TForm1
     TabOrder = 8
     OnClick = Button4Click
   end
+  object Edit1: TEdit
+    Left = 417
+    Top = 37
+    Width = 83
+    Height = 21
+    TabOrder = 9
+  end
   object DataSource1: TDataSource
     DataSet = FDQuery1
     Left = 312

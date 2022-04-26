@@ -8,9 +8,12 @@ uses
   Manager.Types,
   Manager.Interfaces,
   System.Generics.Collections,
-  FireDAC.Comp.Client, Vcl.Dialogs;
+  FireDAC.Comp.Client, Vcl.Dialogs, System.TypInfo, System.Variants;
 
 type
+
+  tpColumn = (ID, Abertura, Fechamento, Total);
+
   TManagerCaixa = class(TInterfacedObject, iManager<TCaixa>)
   private
     FSQL: String;
@@ -205,9 +208,43 @@ begin
 end;
 
 function TManagerCaixa.Where(Column: String; aValue: Variant): iManager<TCaixa>;
+var
+  aTpColumn: tpColumn;
+  vExpression: String;
 begin
+  aTpColumn := tpColumn(GetEnumValue(TypeInfo(tpColumn), Column));
+
+  case aTpColumn of
+    ID:
+      begin
+        vExpression := 'ID = ' + Integer(aValue).ToString;
+      end;
+
+    Abertura:
+      begin
+        vExpression := 'OPENED_IN = ' +
+          QuotedStr(FormatDateTime('YYYY-MM-DD HH:mm:ss',
+          VarToDateTime(aValue)));
+      end;
+    Fechamento:
+      begin
+        if not(String(aValue) = '') then
+          vExpression := 'CLOSED_IN = ' +
+            QuotedStr(FormatDateTime('YYYY-MM-DD HH:mm:ss',
+            VarToDateTime(aValue)))
+        else
+          vExpression := 'CLOSED_IN is null';
+      end;
+    Total:
+      begin
+        vExpression := 'TOTAL = ' + StringReplace(FloatToStr(Double(aValue)),
+          ',', '.', [rfReplaceAll]);
+      end;
+  end;
+
   Result := Self;
-  FSQL := FSQL + ' WHERE ' + Column + '=' + QuotedStr(aValue);
+
+  FSQL := FSQL + ' WHERE ' + vExpression;
   FDataSet.SQL.Clear;
   FDataSet.SQL.Add(FSQL);
   FDataSet.Open;
