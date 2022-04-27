@@ -15,7 +15,6 @@ type
     procedure Update;
     procedure Remove;
     function DataSet(DataSet: TFDQuery): iManager<T>;
-    function List: TObjectList<T>;
     function UniqueResult: T;
     function ResultLastInsert: T;
     function Find: iManager<T>; overload;

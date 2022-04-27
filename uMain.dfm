@@ -123,6 +123,14 @@ object Form1: TForm1
     TabOrder = 11
     TextHint = 'Order By'
   end
+  object CBLista: TComboBox
+    Left = 232
+    Top = 119
+    Width = 145
+    Height = 21
+    TabOrder = 12
+    TextHint = 'Lista de Caixa'
+  end
   object DataSource1: TDataSource
     DataSet = FDQuery1
     Left = 312

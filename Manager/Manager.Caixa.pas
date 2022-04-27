@@ -28,7 +28,6 @@ type
     procedure Update;
     procedure Remove;
     function DataSet(DataSet: TFDQuery): iManager<TCaixa>;
-    function List: TObjectList<TCaixa>;
     function UniqueResult: TCaixa;
     function ResultLastInsert: TCaixa;
     function Find: iManager<TCaixa>; overload;
@@ -110,30 +109,6 @@ begin
   FDataSet.Open;
 end;
 
-function TManagerCaixa.List: TObjectList<TCaixa>;
-var
-  vLCaixa: TObjectList<TCaixa>;
-  I:Integer;
-begin
-  vLCaixa := TObjectList<TCaixa>.Create;
-
-  FSQL := 'SELECT * FROM CAIXA';
-  FDataSet.SQL.Clear;
-  FDataSet.SQL.Add(FSQL);
-  FDataSet.Open;
-
-  for I := 0 to FDataSet.RecordCount do
-   begin
-      vLCaixa[I]
-        .ID(FDataSet.FieldByName('ID').Value)
-        .Abertura(FDataSet.FieldByName('OPENED_IN').Value)
-        .Fechamento(FDataSet.FieldByName('CLOSED_IN').Value)
-        .Total(FDataSet.FieldByName('TOTAL').Value);
-   end;
-
-  Result := vLCaixa;
-end;
-
 class function TManagerCaixa.New: iManager<TCaixa>;
 begin
   Result := Self.Create;
@@ -176,8 +151,7 @@ begin
   FDataSet.SQL.Clear;
   FDataSet.SQL.Add(FSQL);
   FDataSet.Open;
-  FCaixa
-    .ID(FDataSet.FieldByName('ID').Value)
+  FCaixa.ID(FDataSet.FieldByName('ID').Value)
     .Abertura(FDataSet.FieldByName('OPENED_IN').Value)
     .Fechamento(FDataSet.FieldByName('CLOSED_IN').Value)
     .Total(FDataSet.FieldByName('TOTAL').Value);

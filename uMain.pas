@@ -39,7 +39,7 @@ uses
   FireDAC.Stan.ExprFuncs,
   FireDAC.Phys.SQLiteWrapper.Stat,
   Vcl.ComCtrls,
-  Manager.Types;
+  Manager.Types, System.Generics.Collections;
 
 type
   TForm1 = class(TForm)
@@ -58,6 +58,7 @@ type
     Edit1: TEdit;
     CBOperador: TComboBox;
     CBOrderBy: TComboBox;
+    CBLista: TComboBox;
     procedure btnCaixaClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -122,12 +123,9 @@ end;
 procedure TForm1.Button2Click(Sender: TObject);
 begin
 
-  pCaixa
-    .DataSet(FDQuery1)
-    .Find
-    .Where(EdtOpen.Text,
-    tpFilterOperator(CBOperador.ItemIndex), Edit1.Text)
-    .OrderBy(EdtOpen.Text, tpOrderDirection(CBOrderBy.ItemIndex));
+  pCaixa.DataSet(FDQuery1).Find.Where(EdtOpen.Text,
+    tpFilterOperator(CBOperador.ItemIndex), Edit1.Text).OrderBy(EdtOpen.Text,
+    tpOrderDirection(CBOrderBy.ItemIndex));
 
   // AtualizaCaixa;
 end;
